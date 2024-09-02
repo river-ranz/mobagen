@@ -8,8 +8,8 @@ Vector2f AlignmentRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
   // todo: add your code here to align each boid in a neighborhood
   // hint: iterate over the neighborhood
   if (!neighborhood.empty()) {
-    for (Boid *b : neighborhood) {
-      averageVelocity += b->velocity;
+    for (Boid *neighbor : neighborhood) {
+      averageVelocity += neighbor->velocity;
     }
     averageVelocity += boid->velocity;
     averageVelocity /= (neighborhood.size() + 1);
