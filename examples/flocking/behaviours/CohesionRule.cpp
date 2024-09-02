@@ -8,11 +8,14 @@ Vector2f CohesionRule::computeForce(const std::vector<Boid*>& neighborhood, Boid
   // hint: iterate over the neighborhood
 
   // find center of mass
-  float centerMassX = 0, centerMassY = 0;
-  for (int i = 0; i < neighborhood.size(); i++) {
-    Vector2f pos = neighborhood[i]->getPosition();
-    centerMassX += pos.x;
-    centerMassY += pos.y;
+  float centerMassX = 0;
+  float centerMassY = 0;
+  if (!neighborhood.empty()) {
+    for (int i = 0; i < neighborhood.size(); i++) {
+      Vector2f pos = neighborhood[i]->getPosition();
+      centerMassX += pos.x;
+      centerMassY += pos.y;
+    }
   }
 
   Vector2f centerMass = Vector2f(centerMassX / neighborhood.size(), centerMassY / neighborhood.size());
@@ -25,6 +28,10 @@ Vector2f CohesionRule::computeForce(const std::vector<Boid*>& neighborhood, Boid
   }
   else {
     cohesionForce = Vector2f(agentCM.x / boid->getDetectionRadius(), agentCM.y / boid->getDetectionRadius());
+  }
+
+  if (cohesionForce.getMagnitude() > 1) {
+
   }
 
   return cohesionForce;
