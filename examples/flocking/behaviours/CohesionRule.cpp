@@ -4,27 +4,31 @@
 Vector2f CohesionRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
   Vector2f cohesionForce;
 
-  // todo: add your code here to make a force towards the center of mass
-  // hint: iterate over the neighborhood
-
   // find center of mass
   Vector2f centerMass = Vector2f::zero();
   if (!neighborhood.empty()) {
     for (Boid *neighbor : neighborhood) {
       centerMass += neighbor->getPosition();
     }
-    centerMass /= neighborhood.size();
 
-    Vector2f boidPos = boid->getPosition();
-    Vector2f agentCM = Vector2f(centerMass.x - boidPos.x, centerMass.y - boidPos.y);
+    centerMass += boid->getPosition();
+    centerMass /= neighborhood.size() + 1;
 
+    // Pcm - Pagent
+    Vector2f agentCM = Vector2f(centerMass.x - boid->getPosition().x, centerMass.y - boid->getPosition().y);
+
+    // check if within cohesion radius
     if (agentCM.getMagnitude() > boid->getDetectionRadius()) {
       cohesionForce = Vector2f(0,0);
     }
     else {
       cohesionForce = Vector2f(agentCM.x / boid->getDetectionRadius(), agentCM.y / boid->getDetectionRadius());
     }
+
+    // maximum magnitude = 1
+    cohesionForce = cohesionForce.normalized();
   }
+
 
   return cohesionForce;
 }
