@@ -9,7 +9,7 @@ Vector2f BoundedAreaRule::computeForce(const std::vector<Boid*>& neighborhood, B
 
   auto winSize = this->world->engine->window->size();
 
-  //right
+  //right and left bounds
   if (boid->getPosition().x > winSize.x - desiredDistance) {
     force.x = boid->getPosition().x - (winSize.x + desiredDistance);
   }
@@ -18,6 +18,7 @@ Vector2f BoundedAreaRule::computeForce(const std::vector<Boid*>& neighborhood, B
     force.x = boid->getPosition().x + (0 + desiredDistance);
   }
 
+  //top and bottom bounds
   if (boid->getPosition().y > winSize.y - desiredDistance) {
     force.y = boid->getPosition().y - (winSize.y + desiredDistance);
   }
