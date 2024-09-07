@@ -17,7 +17,7 @@ Vector2f MouseInfluenceRule::computeForce(const std::vector<Boid*>& neighborhood
           if (!isRepulsive)
               force *= -1.f;
 
-          return force;
+          return force * 10;
       }
       else
           return Vector2f::zero();

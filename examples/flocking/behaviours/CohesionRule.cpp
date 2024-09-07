@@ -29,6 +29,6 @@ Vector2f CohesionRule::computeForce(const std::vector<Boid*>& neighborhood, Boid
     cohesionForce = cohesionForce.normalized();
   }
 
-
-  return cohesionForce;
+  //mult by constant
+  return cohesionForce * 2;
 }
