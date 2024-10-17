@@ -2,53 +2,42 @@
 #define AGENT_H
 #include "math/Point2D.h"
 #include <vector>
-#include <unordered_set>
 #include <unordered_map>
-#include <queue>
+#include <unordered_set>
 
 class World;
 
-struct AStarNode {
-  Point2D point;
-  int accCost;
-  int heuristic;
+struct Cost {
+  int cost;
 
-  bool operator<(const AStarNode& other) const {
-    return accCost + heuristic > other.accCost + other.heuristic;
+  bool operator<(const Cost& rhs) const {
+    return cost > rhs.cost;
   }
 };
 
-int distanceToTheBorder(Point2D p, int SideSizeOver2) {
-  // right side
-  if (p.x - p.y < 0 && p.x + p.y > 0) {
-    return SideSizeOver2 - p.x;
+struct AStarNode {
+  Point2D point;
+  Cost heuristic;
+  int accCost;
+
+  bool operator<(const AStarNode& other) const {
+    return heuristic.cost + accCost > other.heuristic.cost + other.accCost;
   }
-  // north
-  if (p.x - p.y > 0 && p.x + p.y > 0) {
-    return SideSizeOver2 - p.y;
-  }
-  // left side
-  if (p.x - p.y > 0 && p.x + p.y < 0) {
-    return SideSizeOver2 + p.x;
-  }
-  // south
-  if (p.x - p.y < 0 && p.x + p.y < 0) {
-    return SideSizeOver2 + p.y;
-  }
-}
+};
 
 class Agent {
 private:
-  std::priority_queue<AStarNode> frontier;          // to store next ones to visit
-  std::unordered_set<AStarNode> frontierSet;        // OPTIMIZATION to check faster if a point is in the queue
-  std::unordered_map<Point2D, bool> visited;      // use .at() to get data, if the element dont exist [] will give you wrong results
+  std::unordered_map<Point2D, bool> visited;      // use .at() to get data, if the element don't exist [] will give you wrong results
+  std::unordered_set<Point2D> frontierSet;        // OPTIMIZATION to check faster if a point is in the queue
 public:
   explicit Agent() = default;
 
   virtual Point2D Move(World*) = 0;
 
   std::vector<Point2D> generatePath(World* w);
-  std::vector<Point2D> getVisitableNeighbors(World* w, Point2D p);
+  std::vector<Point2D> getVisitableNeighbors(World* w, Point2D p) const;
+
+  int distanceToTheBorder(Point2D p, int sideSizeOver2);
 };
 
 #endif  // AGENT_H
