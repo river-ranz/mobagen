@@ -46,7 +46,13 @@ std::vector<Point2D> Agent::generatePath(World* w) {
       frontier.push(make_pair(neighborStar, neighborStar.heuristic));
       frontierSet.insert(neighborStar.point);
       // do this up to find a visitable border and break the loop
+      if (w->catWinsOnSpace(neighborStar.point)) {
+        borderExit = neighborStar.point;
+        break;
+      }
     }
+    if (borderExit != Point2D::INFINITE)
+      break;
   }
 
   // if the border is not infinity, build the path from border to the cat using the cameFrom map
@@ -55,16 +61,15 @@ std::vector<Point2D> Agent::generatePath(World* w) {
     path.push_back(borderExit);
 
     while (path.back() != catStar.point) {
-      vector<Point2D> visitableNeighbors = getVisitableNeighbors(w, path.back());
 
-      for (Point2D neighbor : visitableNeighbors) {
-        if (cameFrom.contains(neighbor)) {
-          auto it = cameFrom.find(neighbor);
-          if (path.back() != it->second)
-            path.push_back(it->second);
-        }
-      }
+      auto current = cameFrom.find(path.back());
+      path.push_back(current->second);
     }
+    path.pop_back(); //to remove the cat position
+    for (auto it = path.begin(); it != path.end(); it++) {
+      cout << it->x << ", " << it->y << endl;
+    }
+    cout << endl;
     return path;
   }
   // if there isn't a reachable border, just return empty vector
@@ -80,7 +85,7 @@ std::vector<Point2D> Agent::getVisitableNeighbors(World* w, Point2D p) const {
     // if neighbor is not blocked & neighbor is not the cat position
     if (!w->getContent(neighbor) && neighbor != w->getCat()) {
       // if neighbor is not visited & not in queue
-      if (!visited.contains(neighbor) && !frontierSet.contains(neighbor))
+      if (!visited.contains(neighbor)/* && !frontierSet.contains(neighbor)*/)
         visitable.push_back(neighbor);
     }
   }
