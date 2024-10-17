@@ -15,6 +15,23 @@ std::vector<Point2D> Agent::generatePath(World* w) {
   frontier.push(make_pair(catStar, catStar.heuristic));
   frontierSet.insert(catStar.point);
   Point2D borderExit = Point2D::INFINITE;  // if at the end of the loop we don't find a border, we have to return random points
+  vector<Point2D> oldPath;
+
+  if (path.size() != 0) {
+    oldPath = path;
+    /*if (path.back() == catStar.point) {
+      path.pop_back();
+    }
+    path.erase(path.begin());
+    for (Point2D point : path) {
+      if (!w->getContent(point)) {
+        newPath.push_back(point);
+      }
+    }
+    if (newPath.size() == path.size()) {
+      return newPath;
+    }*/
+  }
 
   while (!frontier.empty()) {
     // get the current from frontier
@@ -57,7 +74,7 @@ std::vector<Point2D> Agent::generatePath(World* w) {
 
   // if the border is not infinity, build the path from border to the cat using the cameFrom map
   if (borderExit != Point2D::INFINITE) {
-    vector<Point2D> path;
+    path.clear();
     path.push_back(borderExit);
 
     while (path.back() != catStar.point) {
@@ -73,6 +90,13 @@ std::vector<Point2D> Agent::generatePath(World* w) {
     return path;
   }
   // if there isn't a reachable border, just return empty vector
+  if (oldPath.size() != 0) {
+    for (auto it = oldPath.begin(); it != oldPath.end(); it++) {
+      cout << it->x << ", " << it->y << endl;
+    }
+    cout << endl;
+    return oldPath;
+  }
   return vector<Point2D>();
 
   // if your vector is filled from the border to the cat, the first element is the catcher move, and the last element is the cat move

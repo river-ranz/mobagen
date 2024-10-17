@@ -29,6 +29,7 @@ class Agent {
 private:
   std::unordered_map<Point2D, bool> visited;      // use .at() to get data, if the element don't exist [] will give you wrong results
   std::unordered_set<Point2D> frontierSet;        // OPTIMIZATION to check faster if a point is in the queue
+  std::vector<Point2D> path;
 public:
   explicit Agent() = default;
 

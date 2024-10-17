@@ -4,7 +4,15 @@
 
 Point2D Cat::Move(World* world) {
   std::vector<Point2D> path = generatePath(world);
-  if (!path.empty()) { return path.back(); }
+  if (!path.empty() && !world->getContent(path.back()) && path.back() != world->getCat()) { return path.back(); }
+  // if invalid
+  if (path.size() > 2) {
+    auto it = path.end();
+    --it;
+    if (it != path.end() && *it != world->getCat() && !world->getContent(*it)) {
+      return *it;
+    }
+  }
 
     auto rand = Random::Range(0, 5);
     auto pos = world->getCat();

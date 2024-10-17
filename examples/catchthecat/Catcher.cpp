@@ -3,7 +3,15 @@
 
 Point2D Catcher::Move(World* world) {
   std::vector<Point2D> path = generatePath(world);
-  if (!path.empty()) { return path.front(); }
+  if (!path.empty() && !world->getContent(path.front()) && path.front() != world->getCat()) { return path.front(); }
+  // if that is invalid, choose the next point
+  if (path.size() > 2) {
+    auto it = path.begin();
+    ++it;
+    if (it != path.end() && *it != world->getCat() && !world->getContent(*it)) {
+      return *it;
+    }
+  }
 
   auto side = world->getWorldSideSize() / 2;
   for (;;) {
