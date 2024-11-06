@@ -15,43 +15,30 @@ std::vector<Color32> MyGenerator::Generate(int sideSize, float displacement) {
       float posY = (float)((j - sideSize / 2)) / ((float)sideSize / 2);
       float posX = (float)((i - sideSize / 2)) / ((float)sideSize / 2);
 
-      float ny = (float)(2 * i / sideSize) - 1;
-      float nx = (float)(2 * j / sideSize) - 1;
+      float const islandInfluence = (1 - posX * posX) * (1 - posY * posY);
 
-      // square bump distance function
-      float distance = 1 - (1 - pow(ny, 2)) * (1 - pow(nx, 2));
-      
       float noise = perlinNoise.noise3D_01(posY * 2, posX * 2, displacement * 50) + 1;
       noise /= 2;
-      noise *= 255;
 
-      float avg = std::lerp(noise, 1 - distance, 0.525);
+      float avg = std::lerp(avg, 0, 0.5);
 
-      if (avg < 80) {
-        colors.emplace_back(0, 0, std::lerp(255, 150, 0.5));
+      avg += islandInfluence * 0.4 + noise * 0.7;
+
+      if (avg < 1.0f) {
+        colors.push_back(Color32::LerpColor(Color::DarkBlue, Color::Blue, avg / 1.0f));
       }
-      else if (avg < 90) {
-        colors.emplace_back(std::lerp(255, 100, 0.5), std::lerp(200, 100, 0.5), 0);
+      else if (avg < 1.15f) {
+        colors.push_back(Color32::LerpColor(Color::Blue, Color::DarkGoldenrod, (avg - 1.0f) / 0.3f));
       }
-      else if (avg < 100) {
-        colors.emplace_back(std::lerp(20, 0, 0.5), std::lerp(200, 100, 0.5), std::lerp(100, 10, 0.5));
+      else if (avg < 1.3f) {
+        colors.push_back(Color32::LerpColor(Color::DarkGoldenrod, Color::ForestGreen, (avg - 1.15f) / 0.4f));
       }
-      else if (avg < 110) {
-        colors.emplace_back(std::lerp(255, 100, 0.5), std::lerp(200, 100, 0.5), std::lerp(150, 100, 0.5));
+      else if (avg < 1.45f) {
+        colors.push_back(Color32::LerpColor(Color::ForestGreen, Color::Tan, (avg - 1.3f) / 0.5f));
       }
       else {
-        colors.emplace_back(Color::White);
+        colors.push_back(Color32::LerpColor(Color::Tan, Color::White, (avg - 1.45f) / 0.6f));
       }
-      // if (avg < 50)
-      //   colors.emplace_back(Color::DarkBlue);
-      // else if (avg < 100)
-      //   colors.emplace_back(Color::Yellow);
-      // else if (avg < 150)
-      //   colors.emplace_back(Color::Green);
-      // else if (avg < 200)
-      //   colors.emplace_back(Color::Brown);
-      // else
-      //   colors.emplace_back(Color::White);
     }
   }
   std::cout << colors.size() << std::endl;
