@@ -7,7 +7,7 @@ std::vector<Color32> MyGenerator::Generate(int sideSize, float displacement) {
   std::vector<Color32> colors;
 
   siv::PerlinNoise perlinNoise(sideSize);
-  //perlinNoise.octave3D_01(1, 1, 1, 3);
+  float octave = perlinNoise.octave3D_01(1, 1, 1, 3);
 
   for (int i = 0; i < sideSize; i++) {
     for (int j = 0; j < sideSize; j++) {
@@ -20,9 +20,11 @@ std::vector<Color32> MyGenerator::Generate(int sideSize, float displacement) {
       float noise = perlinNoise.noise3D_01(posY * 2, posX * 2, displacement * 50) + 1;
       noise /= 2;
 
-      float avg = std::lerp(avg, 0, 0.5);
+      float avg = std::lerp(avg, 0, 0.5f);
 
-      avg += islandInfluence * 0.4 + noise * 0.7;
+      avg *= octave * 1.8f;
+
+      avg += islandInfluence * 0.4f + noise * 0.7f;
 
       if (avg < 1.0f) {
         colors.push_back(Color32::LerpColor(Color::DarkBlue, Color::Blue, avg / 1.0f));
