@@ -7,6 +7,11 @@ class MyGenerator : public ScenarioGeneratorBase {
 public:
   std::vector<Color32> Generate(int sideSize, float displacement = 0) override;
   std::string GetName() override;
+
+  std::vector<float> HydraulicErosion(std::vector<float> height, int sideSize);
+
+private:
+  std::vector<float> height;
 };
 
 #endif //MYGENERATOR_H
