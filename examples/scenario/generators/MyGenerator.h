@@ -12,6 +12,7 @@ public:
 
 private:
   std::vector<float> height;
+  int prevSideSize = 0;
 };
 
 #endif //MYGENERATOR_H

@@ -11,10 +11,10 @@ std::vector<Color32> MyGenerator::Generate(int sideSize, float displacement) {
   siv::PerlinNoise perlinNoise(sideSize);
   float octave = perlinNoise.octave3D_01(1, 1, 1, 3);
 
-  if (height.size() == sideSize * sideSize) {
+  if (prevSideSize == sideSize) { //if size doesn't change (buggy)
     height = HydraulicErosion(height, sideSize);
   }
-  else {
+  else { //generate terrain
     for (int i = 0; i < sideSize; i++) {
       for (int j = 0; j < sideSize; j++) {
 
@@ -59,6 +59,7 @@ std::vector<Color32> MyGenerator::Generate(int sideSize, float displacement) {
     }
   }
   std::cout << colors.size() << std::endl;
+  prevSideSize = sideSize;
   return colors;
 }
 
@@ -69,7 +70,7 @@ std::vector<float> MyGenerator::HydraulicErosion(std::vector<float> height, int 
 
   Vector2<float> pos = Vector2<float>(rand() % sideSize, rand() % sideSize);
   float startHeight = height[pos.y * sideSize + pos.x];
-  float waterRemaining = 5;
+  float waterRemaining = 150;
 
   while (waterRemaining > 0) {
     // find neighbors
@@ -90,9 +91,11 @@ std::vector<float> MyGenerator::HydraulicErosion(std::vector<float> height, int 
     }
     // if start is the lowest point around
     if (minLoc.x == pos.x && minLoc.y == pos.y && minLoc.z == startHeight)
-      return height;
+      break;
 
-    height[minLoc.y * sideSize + minLoc.x] -= 0.1;
+    if (height[minLoc.y * sideSize + minLoc.x] > 1.15f)
+      height[minLoc.y * sideSize + minLoc.x] -= 0.01;
+
     pos.x = minLoc.x;
     pos.y = minLoc.y;
     startHeight = minLoc.z;
